@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="/logo.png" />
+
+    <script
+      src="https://cdn.ethers.io/lib/ethers-5.7.1.umd.min.js"
+      type="application/javascript"
+    ></script>
+    <link href="/styles.css" rel="stylesheet" type="text/css" />
+    <link href="/styles.css" rel="stylesheet" type="text/css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
+    />
+
+    <title>ChainEmployee</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="container">
+        <a href="/api/v1/post/taskList">
+          <h1>ChainEmployee</h1>
+        </a>
+
+        <nav>
+          <div>
+            <form action="/api/v1/auth/logout" method="GET">
+              <span><%= user.email %></span>
+              <div class="dropdown">
+                <button class="dropbtn">Menu</button>
+                <div class="dropdown-content">
+                  <a href="/api/v1/user/todos" class="nav-button">Todo List</a>
+                  <a href="/api/v1/chat/" class="nav-button">Team Chat</a>
+                  <a href="/api/v1/post/taskList" class="nav-button"
+                    >Daily Tasks</a
+                  >
+                  <a href="/api/v1/project/" class="nav-button">Projects</a>
+                  <% if (user.isAdmin) { %>
+                  <a href="/api/v1/project/deployedProjects" class="nav-button"
+                    >Deployed Projects</a
+                  >
+                  <a href="/api/v1/employee/" class="nav-button">Employees</a>
+                  <a href="/api/v1/employee/create" class="nav-button"
+                    >Create Employee</a
+                  >
+                  <% } %>
+                </div>
+              </div>
+
+              <button type="submit">Log out</button>
+            </form>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <div id="chat">
+      <h2 id="chat-title">Team chat</h2>
+      <div id="chat-window">
+        <div id="output">
+          <% if ( messages.length > 0) { %> <% messages.forEach(message => { %>
+          <p>
+            <strong><%= message.firstName %> <%= message.lastName %>: </strong
+            ><%= message.message %>
+          </p>
+          <% }); %> <% } else { %>
+          <p>No messages available</p>
+          <% } %>
+        </div>
+        <div id="feedback"></div>
+      </div>
+      <form class="create" id="messageForm">
+        <input id="message" type="text" placeholder="Message" name="message" />
+        <div class="loading-spinner" id="loadingSpinner"></div>
+        <button id="send">Send</button>
+      </form>
+    </div>
+
+    <script src="/teamChatAbi.js" type="application/javascript"></script>
+    <script>
+      const taskForm = document.getElementById("messageForm");
+      const loadingSpinner = document.getElementById("loadingSpinner");
+      const submitButton = document.getElementById("send");
+
+      function showLoadingSpinner() {
+        loadingSpinner.style.display = "block";
+      }
+
+      function hideLoadingSpinner() {
+        loadingSpinner.style.display = "none";
+      }
+
+      taskForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        showLoadingSpinner();
+
+        submitButton.disabled = true;
+
+        const message = document.getElementsByName("message")[0].value;
+        const firstName = "<%=user.firstName%>";
+        const lastName = "<%=user.lastName%>";
+        const contract_address = "<%= process.env.TEAM_CHAT_CONTRACT_ADRESS%>";
+
+        try {
+          console.log("test1");
+          await ethereum.request({ method: "eth_requestAccounts" });
+          const provider = new ethers.providers.Web3Provider(window.ethereum);
+          const signer = provider.getSigner();
+          console.log("test1");
+          const contractInstance = new ethers.Contract(
+            contract_address,
+            abi,
+            signer
+          );
+          console.log("test2");
+
+          const transaction = await contractInstance.sendMessage(
+            firstName,
+            lastName,
+            message
+          );
+          console.log("test3");
+
+          await transaction.wait();
+
+          taskForm.reset();
+        } catch (error) {
+          console.log(error);
+        } finally {
+          console.log("test4");
+          hideLoadingSpinner();
+          submitButton.disabled = false;
+          window.location.reload();
+        }
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="/logo.png" />
+
+    <script
+      src="https://cdn.ethers.io/lib/ethers-5.7.1.umd.min.js"
+      type="application/javascript"
+    ></script>
+    <link href="/styles.css" rel="stylesheet" type="text/css" />
+    <link href="/styles.css" rel="stylesheet" type="text/css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
+    />
+
+    <title>ChainEmployee</title>
+
+    <style>
+      body {
+        background-color: #f8f9fa;
+      }
+
+      .todo-container {
+        max-width: 400px;
+        margin: 50px auto;
+      }
+
+      .todo-list {
+        list-style-type: none;
+        padding: 0;
+      }
+
+      .todo-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px;
+        border: 1px solid #dee2e6;
+        margin-bottom: 10px;
+        background-color: #fff;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+
+      .todo-item.crossed {
+        text-decoration: line-through;
+        background-color: #d6d8d9;
+      }
+
+      .delete-button {
+        background-color: #dc3545;
+        color: #fff;
+        border: none;
+        padding: 5px 10px;
+        cursor: pointer;
+      }
+
+      .input-group-append {
+        width: 100%;
+        display: flex;
+        align-items: center;
+      }
+
+      .add-button {
+        width: 100%;
+      }
+    </style>
+  </head>
+
+  <body>
+    <header>
+      <div class="container">
+        <a href="/api/v1/post/taskList">
+          <h1>ChainEmployee</h1>
+        </a>
+
+        <nav>
+          <div>
+            <form action="/api/v1/auth/logout" method="GET">
+              <span><%= user.email %></span>
+              <div class="dropdown">
+                <button class="dropbtn">Menu</button>
+                <div class="dropdown-content">
+                  <a href="/api/v1/user/todos" class="nav-button">Todo List</a>
+                  <a href="/api/v1/chat/" class="nav-button">Team Chat</a>
+                  <a href="/api/v1/post/taskList" class="nav-button"
+                    >Daily Tasks</a
+                  >
+                  <a href="/api/v1/project/" class="nav-button">Projects</a>
+                  <% if (user.isAdmin) { %>
+                  <a href="/api/v1/project/deployedProjects" class="nav-button"
+                    >Deployed Projects</a
+                  >
+                  <a href="/api/v1/employee/" class="nav-button">Employees</a>
+                  <a href="/api/v1/employee/create" class="nav-button"
+                    >Create Employee</a
+                  >
+                  <% } %>
+                </div>
+              </div>
+
+              <button type="submit">Log out</button>
+            </form>
+          </div>
+        </nav>
+      </div>
+    </header>
+    <div class="container todo-container">
+      <h2 class="text-center mb-4">My Todos</h2>
+
+      <!-- Todo List -->
+      <ul class="list-group todo-list" id="todo-list">
+        <% todos.forEach(todo => { %>
+        <li
+          onclick="toggleTodoItem(event, '<%= todo._id %>')"
+          class="list-group-item todo-item <%= todo.isCompleted ? 'crossed' : '' %>"
+        >
+          <span><%= todo.text %></span>
+          <button
+            class="delete-button"
+            onclick="deleteTodoItem(event, '<%= todo._id %>')"
+          >
+            Delete
+          </button>
+        </li>
+        <% }); %>
+      </ul>
+
+      <!-- Todo Input Form -->
+      <form id="todo-form" class="mt-3">
+        <div class="input-group">
+          <input
+            type="text"
+            id="todo-input"
+            class="form-control"
+            placeholder="Add a new todo"
+            required
+          />
+          <div class="input-group-append">
+            <button
+              id="addButton"
+              class="btn btn-outline-secondary add-button"
+              type="button"
+            >
+              Add
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <script>
+      document
+        .getElementById("addButton")
+        .addEventListener("click", async function () {
+          const todoText = document.getElementById("todo-input").value;
+          if (todoText.trim() !== "") {
+            try {
+              const response = await fetch("/api/v1/user/addTodo", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ text: todoText }),
+              });
+
+              if (!response.ok) {
+                throw new Error("Failed to add Todo item");
+              }
+
+              const data = await response.json();
+              console.log("test1");
+              addTodoItem(data.text, data._id); // Pretpostavljajući da backend vraća ID
+              console.log("test2");
+              document.getElementById("todo-input").value = "";
+              console.log("test3");
+              window.location.reload();
+            } catch (error) {
+              console.error(error);
+            }
+          }
+        });
+
+      function addTodoItem(text, id) {
+        const todoList = document.getElementById("todo-list");
+        const todoItem = document.createElement("li");
+        todoItem.className = "list-group-item todo-item";
+        todoItem.innerHTML = `<span>${text}</span><button class="delete-button">Delete</button>`;
+
+        todoList.appendChild(todoItem);
+      }
+
+      async function toggleTodoItem(event, id) {
+        const todoItem = event.target; // dohvatite element na koji je kliknuto
+        console.log(id);
+
+        todoItem.classList.toggle("crossed");
+
+        try {
+          const response = await fetch(`/api/v1/user/toggleTodo/${id}`, {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
+
+          if (!response.ok) {
+            throw new Error("Failed to toggle Todo item");
+          }
+        } catch (error) {
+          console.error(error);
+        }
+      }
+
+      async function deleteTodoItem(event, id) {
+        event.stopPropagation();
+        console.log(id);
+
+        try {
+          const response = await fetch(`/api/v1/user/deleteTodo/${id}`, {
+            method: "DELETE",
+          });
+
+          if (!response.ok) {
+            throw new Error("Failed to delete Todo item");
+          }
+
+          const todoItem = event.target.parentElement;
+          todoItem.remove();
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="/logo.png" />
+
+    <script
+      src="https://cdn.ethers.io/lib/ethers-5.7.1.umd.min.js"
+      type="application/javascript"
+    ></script>
+    <link href="/styles.css" rel="stylesheet" type="text/css" />
+    <link href="/styles.css" rel="stylesheet" type="text/css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
+    />
+
+    <title>ChainEmployee</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="container">
+        <a href="/api/v1/post/taskList">
+          <h1>ChainEmployee</h1>
+        </a>
+
+        <nav>
+          <div>
+            <form action="/api/v1/auth/logout" method="GET">
+              <span><%= user.email %></span>
+              <div class="dropdown">
+                <button class="dropbtn">Menu</button>
+                <div class="dropdown-content">
+                  <a href="/api/v1/user/todos" class="nav-button">Todo List</a>
+                  <a href="/api/v1/chat/" class="nav-button">Team Chat</a>
+                  <a href="/api/v1/post/taskList" class="nav-button"
+                    >Daily Tasks</a
+                  >
+                  <a href="/api/v1/project/" class="nav-button">Projects</a>
+                  <% if (user.isAdmin) { %>
+                  <a href="/api/v1/project/deployedProjects" class="nav-button"
+                    >Deployed Projects</a
+                  >
+                  <a href="/api/v1/employee/" class="nav-button">Employees</a>
+                  <a href="/api/v1/employee/create" class="nav-button"
+                    >Create Employee</a
+                  >
+                  <% } %>
+                </div>
+              </div>
+
+              <button type="submit">Log out</button>
+            </form>
+          </div>
+        </nav>
+      </div>
+    </header>
+    <div class="form-container">
+      <form
+        action="/api/v1/auth/create"
+        method="POST"
+        class="add-employee-form"
+      >
+        <h2>Add New Employee</h2>
+
+        <label for="firstName">First Name:</label>
+        <input type="text" id="firstName" name="firstName" required />
+
+        <label for="lastName">Last Name:</label>
+        <input type="text" id="lastName" name="lastName" required />
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required />
+
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required />
+
+        <button type="submit" class="submit-button">
+          <i class="fas fa-user-plus"></i> Add Employee
+        </button>
+      </form>
+    </div>
+  </body>
+</html>

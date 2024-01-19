@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/styles.css" rel="stylesheet" type="text/css" />
+    <link rel="icon" href="/logo.png" />
+    <title>Login</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="container">
+        <a href="">
+          <h1>ChainEmployee</h1>
+        </a>
+        <nav>
+          <div>
+            <a href="/api/v1/auth/userlogin">Login</a>
+            <a href="/api/v1/auth/userregister">Register</a>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <form class="login" action="/api/v1/auth/login" method="POST">
+      <h3>Log In</h3>
+
+      <label for="email">Email</label>
+      <input type="email" name="email" id="" email required />
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" />
+
+      <button type="submit">Login</button>
+
+      <% if(msg){ %>
+      <div class="error"><%= msg %></div>
+      <%} %>
+    </form>
+  </body>
+</html>

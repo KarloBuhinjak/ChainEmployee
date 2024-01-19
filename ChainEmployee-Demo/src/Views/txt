@@ -1,0 +1,16 @@
+const loadingSpinner = document.getElementById("loadingSpinner"); function
+showLoadingSpinner() { loadingSpinner.style.display = "block"; } function
+hideLoadingSpinner() { loadingSpinner.style.display = "none"; } var
+deployButtons = document.querySelectorAll(".deploy-button");
+deployButtons.forEach(function (button) { button.addEventListener("click",
+function () { var projectName = button .closest(".workout-details")
+.querySelector("h4") .innerText.trim(); }); }); const contract_address = "<%=
+process.env.PROJECT_REGISTRY_CONTRACT_ADRESS%>"; try { console.log("test1");
+await ethereum.request({ method: "eth_requestAccounts" }); const provider = new
+ethers.providers.Web3Provider(window.ethereum); const signer =
+provider.getSigner(); console.log("test1"); const contractInstance = new
+ethers.Contract( contract_address, abi, signer ); console.log("test2"); const
+transaction = await contractInstance.deployProject(projectName);
+console.log("test3"); await transaction.wait(); taskForm.reset(); } catch
+(error) { console.log(error); } finally { console.log("test4");
+hideLoadingSpinner(); submitButton.disabled = false; window.location.reload(); }

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="/logo.png" />
+
+    <script
+      src="https://cdn.ethers.io/lib/ethers-5.7.1.umd.min.js"
+      type="application/javascript"
+    ></script>
+    <link href="/styles.css" rel="stylesheet" type="text/css" />
+    <link href="/styles.css" rel="stylesheet" type="text/css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
+    />
+
+    <title>ChainEmployee</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="container">
+        <a href="/api/v1/post/taskList">
+          <h1>ChainEmployee</h1>
+        </a>
+
+        <nav>
+          <div>
+            <form action="/api/v1/auth/logout" method="GET">
+              <span><%= user.email %></span>
+              <div class="dropdown">
+                <button class="dropbtn">Menu</button>
+                <div class="dropdown-content">
+                  <a href="/api/v1/user/todos" class="nav-button">Todo List</a>
+                  <a href="/api/v1/chat/" class="nav-button">Team Chat</a>
+                  <a href="/api/v1/post/taskList" class="nav-button"
+                    >Daily Tasks</a
+                  >
+                  <a href="/api/v1/project/" class="nav-button">Projects</a>
+                  <% if (user.isAdmin) { %>
+                  <a href="/api/v1/project/deployedProjects" class="nav-button"
+                    >Deployed Projects</a
+                  >
+                  <a href="/api/v1/employee/" class="nav-button">Employees</a>
+                  <a href="/api/v1/employee/create" class="nav-button"
+                    >Create Employee</a
+                  >
+                  <% } %>
+                </div>
+              </div>
+
+              <button type="submit">Log out</button>
+            </form>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <div class="pages">
+      <div class="home">
+        <div class="workouts">
+          <% if (tasks && tasks.length > 0 && tasks[0].projectName) { %>
+          <h2>
+            <%= tasks[0].employeeName %> <%= tasks[0].employeeLastName %> tasks
+          </h2>
+          <% } %> <% if (tasks.length !== 0) { %> <% for (let i = tasks.length -
+          1; i >= 0; i--) { %>
+          <div class="workout-details">
+            <h4><%= tasks[i].projectName %></h4>
+            <p>
+              <strong>Date: </strong><%= new Date(tasks[i].date *
+              1000).toLocaleString() %>
+            </p>
+            <p><strong>Description: </strong><%= tasks[i].description %></p>
+          </div>
+          <% } %> <% } else { %>
+          <h2>No tasks available.</h2>
+          <% } %>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
