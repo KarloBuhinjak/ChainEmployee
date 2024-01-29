@@ -1,4 +1,3 @@
-<img width="1440" alt="user home page" src="https://github.com/KarloBuhinjak/ChainEmployee/assets/84927106/d5ac743a-4d7b-41f5-905b-ad322679b217">
 
 
 # ChainEmployee
