@@ -2,7 +2,7 @@
 
 # ChainEmployee
 
-Demo applications of my final thesis on the topic of Web3 applications for project management and monitoring of employees within the company. The main purpose of the application is to enter the daily tasks of employees for a specific project and monitor these daily tasks by the admin. 
+Demo application of my final thesis on the topic of Web3 application for project management and monitoring employees within the company. The main purpose of the application is to enter the daily tasks of employees for a specific project and monitor these daily tasks by the admin. 
 In this way, we can monitor the traceability and responsibility of the employees on the specific project. The application comes with different user levels:
 - **Admin**: Supervises daily tasks of employees, adds new employees, adds projects
 - **Employee**: They can add their daily tasks and can monitor the activity of other employees on the project
